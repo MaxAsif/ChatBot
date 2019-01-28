@@ -82,7 +82,14 @@ function startBot(whatsapp_no, user) {
 
 function processState(msg, user){
   flag = 0;
-  if ((user.current == 1 || user.current == 15) && msg.toUpperCase().includes('NO')) {
+  if(msg.toUpperCase().includes('STOP')){
+    flag = 2;
+    conn.query(`DELETE FROM compatibilities WHERE user_id = `+user.user_id, function (error, results, fields) {
+      if (error) throw error;
+      logger.info('Deleted user from list = '+user.user_id);
+    });
+  }
+  else if ((user.current == 1 || user.current == 15) && msg.toUpperCase().includes('NO')) {
     user.current = 3;
     logger.info('In #1, user_current = '+user.current+',message = '+msg.toUpperCase());
   }

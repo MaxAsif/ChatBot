@@ -1,4 +1,4 @@
 module.exports.user='root';
-module.exports.database='';
-module.exports.password='';
+module.exports.database='hansdb';
+module.exports.password='918797591718';
 module.exports.host='localhost';
