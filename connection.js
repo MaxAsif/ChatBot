@@ -1,11 +1,12 @@
+config = require('./config/database');
 module.exports = {
   sqlConnection: function(mysql) {
     // var mysql      = require('mysql');
     var connection = mysql.createConnection({
-      host     : 'localhost',
-      user     : 'root',
-      password : '918797591718',
-      database : 'hansdb'
+      host     : config.host,
+      user     : config.user,
+      password : config.password,
+      database : config.database
     });
     connection.connect();
     return connection;

@@ -1,7 +1,4 @@
 module.exports = {
-  sendFirstProfile : function(user){
-      console.log('ds');
-  },
   sendTextMessage: function(socket,msg,whatsapp){
     whatsapp = "91"+whatsapp.substr(whatsapp.length - 10);
     socket.emit("send_text_message", {
@@ -12,11 +9,13 @@ module.exports = {
     });
   },
   sendFileMessage: function(socket,url,whatsapp,msg){
+    // console.log('https://s3.ap-south-1.amazonaws.com/hansmatrimony/uploads/'+url);
+    whatsapp = "91"+whatsapp.substr(whatsapp.length - 10);
   	socket.emit("send_file_message", {
-  		file_link: url,
+  		file_link: 'https://s3.ap-south-1.amazonaws.com/hansmatrimony/uploads/'+url,
   		mobile_number: whatsapp,
-  		type: 'image/jpeg',
-  		caption: '',
+  		type: 'file',
+  		caption: msg,
       sender_mobile: '918447061463'
   	});
   }

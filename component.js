@@ -15,14 +15,17 @@ module.exports = {
     b = arr.sort(function(a,b){
       return b.value - a.value;
     });
+    // b = Object.keys(arr).map(function(key) {
+    //   return [Number(key), arr[key]];
+    // });
     if(user.active == null)
     {
       index = 0;
     }else{
       last_id = user.active.toString();
-      index = b.findIndex(x => x.user_id===last_id.toString());
+      index = b.findIndex(x => x.user_id==last_id.toString());
       profile_status = JSON.parse(user.profile_status);
-      index_p = profile_status.findIndex(x => x.user_id===last_id.toString());
+      index_p = profile_status.findIndex(x => x.user_id==last_id.toString());
       // console.log('index_p',index_p);
       if(profile_status[index_p].status != 'P'){
         index = index + 1;

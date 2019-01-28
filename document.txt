@@ -5,31 +5,35 @@ State 1         : First Profile Sent waiting for Response
     No    : Ok thank you! We will get back to you => State 3 => State 6
     Other : Ask again! => State 15
 
-State 15        : I am sorry I dont understand.
+State 15        : response = 'I am sorry I dont understand.BREAK_LINE👉 Please reply *YES* if interested or *NO* if not interested'.
 
 State 2         : Check Whatsapp point
     Available     : => State 4 (Confirmation ?)
     Not Available : => State 5 (Send Link) => State 10
 
-State 3         : Do not want 1st profile. We will get back to you => State 6
+State 3         : Do not want the profile.
+                  response = 'Ok thank you! We will get back to you' => State 6
 
 State 4         : Said yes to purchase profile. Ask for Confirmation ?
     Yes   : Send Profile with number => State 7 (Reduce WhatsApp point by 1)
-    No    : Ok thank you! We will get back to you => State 3 => State 6
+    No    : response = 'Ok thank you! We will get back to you'
+            => State 3 => State 6
     Other : Ask again! => State 45
 
-State 45        : I am sorry I dont understand
+State 45        : response = 'I am sorry I dont understand.BREAK_LINE👉 Please reply *YES* if you want to purchase or *NO* if you do not want to purchase now.'
 
-State 5         : No point Available, Sent link to purchase => State 10
+State 5         : No point Available, Sent link to purchase  "You have 0 Whatsapp Points. You need to buy Whatsapp Points to continue,BREAK_LINE Click here to buy Whatsapp points http://hansmatrimony.com/plans BREAK_LINE👉 Please reply *NO* if you do not want to purcahse and want to continue viewing profiles"
+                  => State 10
 
 State 6         : *No Response*
 
 State 7         : Sent First Profile. => State 6
 
 State 8         : Do not want to purchase now want to see more profiles.
+                  response = 'Ok sure. We will show you more profile'
 
 State 10        : Link sent. If you do not want to purchase profile and continue viewing profile. Type *NO*
     NO : Do not want to purchase now State 8 => State 6
     Other : Ask again. => State 105
 
-State 105       : I am sorry I dont understand.
+State 105       : response = "I am sorry I dont understand.BREAK_LINE👉 Please reply *NO* if you do not want to purchase now and want to view other profiles."

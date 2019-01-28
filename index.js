@@ -26,13 +26,19 @@ logger.info('Started code @ '+dateFormat(now,"mmmm dS, yyyy, h:MM:ss TT"));
 function processList(userList){
   userList.forEach(user => {
     user.whatsapp = (user.whatsapp != null)? user.whatsapp : user.mobile;
+    if(user.whatsapp.indexOf(',')>-1){
+      user.whatsapp = user.whatsapp.split(',')[0];
+      user.whatsapp = user.whatsapp.substr(user.whatsapp.length - 10);
+    }
     // user.whatsapp = '8092359314';
+    if(user.whatsapp==null)
+      return;
     processUser(user);
   });
 }
 
 function processUser(user){
-  logger.info('Processing user = '+user.whatsapp+',users_current = '+user.current);
+  logger.info('Processing user = '+user.whatsapp+', user_current = '+user.current+", user_id = "+user.id);
   formattedNumber = component.formatNumber(user.whatsapp);
   if(user.current==6 && user.daily_quota >= 3){
     logger.info('Daily quota reached for user',user.whatsapp);
@@ -51,13 +57,13 @@ function sendFirstProfile(user) {
   var profile;
   conn.query(`SELECT profiles.*, DATE_FORMAT(profiles.birth_date, '%M %e, %Y') as birth_date, families.caste, families.locality, families.house_type, families.family_type, families.family_income, families.occupation as foccupation from profiles
      INNER JOIN families ON profiles.id = families.id
-     where profiles.identity_number = `+component.getCompatibleId(user) +` and profiles.gender != '`+user.gender+`'LIMIT 1`, function (error, results, fields) {
+     where profiles.id = `+component.getCompatibleId(user) +` and profiles.gender != '`+user.gender+`'LIMIT 1`, function (error, results, fields) {
        if (error) throw error;
        profile = results[0];
-       // console.log(profile);
        var msg = component.generateProfile(profile,0);
        bot.sendTextMessage(socket,msg,user.whatsapp);
-       logger.info('Sent Profile id = '+ profile.identity_number+' and profile name = '+profile.name+' to user = '+user.whatsapp);
+       // bot.sendFileMessage(socket,profile.photo,user.whatsapp,msg);
+       logger.info('Sent Profile id = '+ profile.id+' and profile name = '+profile.name+' to user = '+user.whatsapp);
        user.current = 1;
        connection.updateCompatibleTable(conn,user.user_id,user.current,user.profile_status,component.getCompatibleId(user),user.daily_quota+1);
        logger.info('Updated table after sending profile for user = '+user.whatsapp+' ,user_id = '+user.id);
@@ -135,12 +141,12 @@ function sendResponse(current,contact,user_id,compatible_id,gender) {
   else if(response == 'FP'){
     conn.query(`SELECT profiles.*, families.caste, families.locality, families.house_type, families.family_type, families.family_income, families.mobile, families.occupation as foccupation from profiles
        INNER JOIN families ON profiles.id = families.id
-       where profiles.identity_number = `+ compatible_id +` and profiles.gender != '`+gender+`'LIMIT 1`, function (error, results, fields) {
+       where profiles.id = `+ compatible_id +` and profiles.gender != '`+gender+`'LIMIT 1`, function (error, results, fields) {
          if (error) throw error;
          profile = results[0];
-         console.log(profile);
+         // console.log(profile);
          var msg = component.generateProfile(profile,1);
-         bot.sendTextMessage(socket,msg,user.whatsapp);
+         bot.sendTextMessage(socket,msg,contact);
     });
   }
 }
@@ -173,7 +179,7 @@ function createResponse(state,user_id,compatible_id){
       if (error) throw error;
     });
     break;
-    case 45: response = "I am sorry I dont understand.BREAK_LINE👉 Please reply *YES* if you want to purchase or *NO* if you do not want to purcahse";
+    case 45: response = "I am sorry I dont understand.BREAK_LINE👉 Please reply *YES* if you want to purchase or *NO* if you do not want to purchase now";
     conn.query(`UPDATE compatibilities SET current = `+45+` WHERE user_id =`+user_id, function (error, results, fields) {
       if (error) throw error;
     });
@@ -218,11 +224,11 @@ function getUserList(){
   conn.query(`UPDATE compatibilities SET current = 0 WHERE current = 6 and daily_quota <3`, function (error, results, fields) {
     if (error) throw error;
   });
-  conn.query(`SELECT compatibilities.* , profiles.whatsapp, families.mobile, profiles.gender
+  conn.query(`SELECT compatibilities.* , profiles.whatsapp, families.mobile, profiles.gender, profiles.id
     FROM ((compatibilities
-    INNER JOIN profiles ON compatibilities.user_id = profiles.identity_number)
-    INNER JOIN families ON compatibilities.user_id = families.identity_number)
-    where daily_quota <=3 LIMIT 1`, function (error, results, fields) {
+    INNER JOIN profiles ON compatibilities.user_id = profiles.id)
+    INNER JOIN families ON compatibilities.user_id = families.id)
+    where daily_quota <=3 and LENGTH(compatibility) > 40 LIMIT 1`, function (error, results, fields) {
     if (error) throw error;
     userList = results;
     processList(userList);
