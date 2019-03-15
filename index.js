@@ -116,6 +116,7 @@ function startBot(whatsapp_no, user) {
   logger.info('Bot started for user = '+whatsapp_no+',user_current = '+user.current);
   lastMessage = component.getLastMessages(chats_data,component.formatNumber(whatsapp_no));
   if (typeof(lastMessage) != 'undefined') {
+    logger.info('message is',lastMessage.message);
     connection.sendSeenRep(socket,lastMessage.from);
     processState(lastMessage.message, user);
   }

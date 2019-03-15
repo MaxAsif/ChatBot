@@ -53,7 +53,7 @@ module.exports = {
       if(chat.chat.includes(whatsapp_no)) {
         logger.info('Message received for user = '+whatsapp_no);
         var messages_all = chat.messages;
-        if(!messages_all[0].contact.includes('918447061463')){
+        if(!messages_all[0].contact.includes('919205125549')){
           msg = messages_all[0];
           chat.messages = chat.messages.filter(message => !message.message.includes(msg.message));
         }
