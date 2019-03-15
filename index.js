@@ -89,8 +89,10 @@ function sendFirstProfile(user) {
        if(profile.temple_id == 'st3')
        {
          user.current = 6;
-         connection.updateCompatibleTable(conn,user.user_id,user.current,user.profile_status,component.getCompatibleId(user),user.daily_quota);
-         return;
+	console.log('here');
+         connection.updateCompatibleTable(conn,user.user_id,6,user.profile_status,component.getCompatibleId(user),user.daily_quota);
+         logger.info('Updated table as profile is non data');
+	 return;
        }
        var msg = component.generateProfile(profile,0);
        bot.sendTextMessage(socket,msg,user.whatsapp);
