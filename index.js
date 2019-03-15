@@ -89,7 +89,8 @@ function sendFirstProfile(user) {
        if(profile.temple_id == 'st1')
        {
          user.current = 6;
-         connection.updateCompatibleTable(conn,user.user_id,user.current,user.profile_status,component.getCompatibleId(user),user.daily_quota+1);
+         connection.updateCompatibleTable(conn,user.user_id,user.current,user.profile_status,component.getCompatibleId(user),user.daily_quota);
+         return;
        }
        var msg = component.generateProfile(profile,0);
        // bot.sendTextMessage(socket,msg,user.whatsapp);
