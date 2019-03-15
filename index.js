@@ -10,7 +10,7 @@ const logger = pino({
 });
 var dateFormat = require('dateformat');
 var mysql = require('mysql');
-var socket = require('socket.io-client')('http://13.126.4.18');
+var socket = require('socket.io-client')('http://13.233.79.202');
 const connection = require('./connection');
 const bot = require('./bot');
 const cTable = require('console.table');
@@ -20,17 +20,43 @@ var userList;
 var chats_data = [];
 
 // getUserList();
-var now = new Date();
-logger.info('Started code @ '+dateFormat(now,"mmmm dS, yyyy, h:MM:ss TT"));
-
-function processList(userList){
+//getAllUser();
+/*function getAllUser(){
+  var userList;
+  conn.query(`SELECT profiles.id, profiles.whatsapp, families.mobile from profiles
+              INNER JOIN families ON families.id = profiles.id
+              WHERE profiles.created_at > DATE_SUB(now(), INTERVAL 6 MONTH)`, function (error, results, fields) {
+    if (error) throw error;
+    userList = results;
+    sendMessage(userList);
+  });
+}
+function sendMessage(userList){
   userList.forEach(user => {
     user.whatsapp = (user.whatsapp != null)? user.whatsapp : user.mobile;
     if(user.whatsapp.indexOf(',')>-1){
       user.whatsapp = user.whatsapp.split(',')[0];
       user.whatsapp = user.whatsapp.substr(user.whatsapp.length - 10);
     }
-    // user.whatsapp = '8092359314';
+    var msg = 'Please reply *YES* if you would like to receive matching profiles here on Whatsapp. If not interested, please reply *STOP*.BREAK_LINE BREAK_LINEwhatsapp पर मैचिंग प्रोफाइल्स प्राप्त करने के लिए रिप्लाई करे *YES* अन्यथा लिखे *STOP*';
+    bot.sendTextMessage(socket,msg,user.whatsapp)
+  });
+}
+*/
+
+var now = new Date();
+logger.info('Started code @ '+dateFormat(now,"mmmm dS, yyyy, h:MM:ss TT"));
+
+function processList(userList){
+  userList.forEach(user => {
+    user.whatsapp = (user.whatsapp != null)? user.whatsapp : user.mobile;
+    if(user.whatsapp==null)
+      return;
+    if(user.whatsapp.indexOf(',')>-1){
+      user.whatsapp = user.whatsapp.split(',')[0];
+      user.whatsapp = user.whatsapp.substr(user.whatsapp.length - 10);
+    }
+    user.whatsapp = '8092359314';
     if(user.whatsapp==null)
       return;
     processUser(user);
@@ -60,9 +86,14 @@ function sendFirstProfile(user) {
      where profiles.id = `+component.getCompatibleId(user) +` and profiles.gender != '`+user.gender+`'LIMIT 1`, function (error, results, fields) {
        if (error) throw error;
        profile = results[0];
+       if(profile.temple_id == 'st1')
+       {
+         user.current = 6;
+         connection.updateCompatibleTable(conn,user.user_id,user.current,user.profile_status,component.getCompatibleId(user),user.daily_quota+1);
+       }
        var msg = component.generateProfile(profile,0);
-       bot.sendTextMessage(socket,msg,user.whatsapp);
-       // bot.sendFileMessage(socket,profile.photo,user.whatsapp,msg);
+       // bot.sendTextMessage(socket,msg,user.whatsapp);
+       bot.sendFileMessage(socket,profile.photo,user.whatsapp,msg);
        logger.info('Sent Profile id = '+ profile.id+' and profile name = '+profile.name+' to user = '+user.whatsapp);
        user.current = 1;
        connection.updateCompatibleTable(conn,user.user_id,user.current,user.profile_status,component.getCompatibleId(user),user.daily_quota+1);
@@ -136,12 +167,12 @@ function processState(msg, user){
   }
    if(flag !=2)
    {
-     sendResponse(user.current,user.whatsapp,user.user_id,component.getCompatibleId(user),user.gender);
+     sendResponse(user.current,user.whatsapp,user.user_id,component.getCompatibleId(user),user.gender,user.whatsapp_point);
    }
 }
 
-function sendResponse(current,contact,user_id,compatible_id,gender) {
-  var response = createResponse(current,user_id,compatible_id);
+function sendResponse(current,contact,user_id,compatible_id,gender,whatsapp_point) {
+  var response = createResponse(current,user_id,compatible_id,whatsapp_point);
   if(response != 'NA' && response != 'FP'){
     bot.sendTextMessage(socket,response,contact);
   }
@@ -158,7 +189,7 @@ function sendResponse(current,contact,user_id,compatible_id,gender) {
   }
 }
 
-function createResponse(state,user_id,compatible_id){
+function createResponse(state,user_id,compatible_id,whatsapp_point){
   var response;
   switch (state) {
     case 15: response = "I am sorry I dont understand.BREAK_LINE👉 Please reply *YES* if interested or *NO* if not interested.";
@@ -181,7 +212,7 @@ function createResponse(state,user_id,compatible_id){
     });
     break;
 
-    case 4 : response = "Are you sure you want to receive the profile?";
+    case 4 : response = "Are you sure you want to view contact number? BREAK_LINEThis will cost you 1 Credit, you have " + whatsapp_point + " credits now.";
     conn.query(`UPDATE compatibilities SET current = `+4+` WHERE user_id =`+user_id, function (error, results, fields) {
       if (error) throw error;
     });
@@ -191,7 +222,7 @@ function createResponse(state,user_id,compatible_id){
       if (error) throw error;
     });
     break;
-    case 5 : response =  "You have 0 Whatsapp Points. You need to buy Whatsapp Points to continue,BREAK_LINE Click here to buy Whatsapp points http://hansmatrimony.com/plans BREAK_LINE👉 Please reply *NO* if you do not want to purcahse and want to continue viewing profiles";
+    case 5 : response =  "You have 0 Whatsapp Points. You need to buy Whatsapp Points to continue,BREAK_LINE Click here to buy Whatsapp points http://hansmatrimony.com/hanswebapp/subscription BREAK_LINE👉 Please reply *NO* if you do not want to purcahse and want to continue viewing profiles";
     conn.query(`UPDATE compatibilities SET current = `+10+` WHERE user_id =`+user_id, function (error, results, fields) {
       if (error) throw error;
     });
@@ -231,11 +262,12 @@ function getUserList(){
   conn.query(`UPDATE compatibilities SET current = 0 WHERE current = 6 and daily_quota <3`, function (error, results, fields) {
     if (error) throw error;
   });
-  conn.query(`SELECT compatibilities.* , profiles.whatsapp, families.mobile, profiles.gender, profiles.id
+  conn.query(`SELECT compatibilities.* , profiles.whatsapp, families.mobile, profiles.gender, profiles.id, preferences.amount_collected
     FROM ((compatibilities
-    INNER JOIN profiles ON compatibilities.user_id = profiles.id)
-    INNER JOIN families ON compatibilities.user_id = families.id)
-    where daily_quota <=3 and LENGTH(compatibility) > 40 LIMIT 1`, function (error, results, fields) {
+    INNER JOIN profiles ON compatibilities.user_id = profiles.id
+    INNER JOIN preferences ON compatibilities.user_id = preferences.id
+    INNER JOIN families ON compatibilities.user_id = families.id))
+    where daily_quota <=3 and LENGTH(compatibility) > 40 and preferences.amount_collected >= 2100 LIMIT 1`, function (error, results, fields) {
     if (error) throw error;
     userList = results;
     processList(userList);
@@ -244,9 +276,11 @@ function getUserList(){
 
 function getUnreadReplies() {
   socket.emit("get_unread_replies", {
-    sender_mobile: '918447061463'
+    sender_mobile: '919205125549'
   });
+	// logger.info('emit sent');
   socket.on("get_unread_response", (chats) => {
+    // logger.info(chats);
     setChatData(chats);
   });
 }
@@ -255,9 +289,9 @@ function setChatData(chats){
   chats_data = chats;
 }
 setInterval(() => {
-  getUserList();
+//  getUserList();
 }, 10000);
 
 setInterval(() => {
-  getUnreadReplies();
+   getUnreadReplies();
 }, 1000);

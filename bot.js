@@ -5,7 +5,7 @@ module.exports = {
       message: msg,
       mobile_number: whatsapp,
       type: "text",
-      sender_mobile: '918447061463'
+      sender_mobile: '919205125549'
     });
   },
   sendFileMessage: function(socket,url,whatsapp,msg){
@@ -16,7 +16,7 @@ module.exports = {
   		mobile_number: whatsapp,
   		type: 'file',
   		caption: msg,
-      sender_mobile: '918447061463'
+      sender_mobile: '919205125549'
   	});
   }
 }

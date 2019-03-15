@@ -1,7 +1,7 @@
 const pino = require('pino');
 const AWS = require('aws-sdk');
 var mysql = require('mysql');
-var socket = require('socket.io-client')('http://13.126.4.18');
+var socket = require('socket.io-client')('http://13.233.79.202');
 const connection = require('../connection');
 const bot = require('../bot');
 const cTable = require('console.table');
@@ -16,18 +16,22 @@ AWS.config.update({
 describe('Test sending Message', function() {
   describe('#sendProfile()', function() {
     it('should return 1 when the profile is send', function() {
-      var profile;
-      conn.query(`SELECT profiles.*, DATE_FORMAT(profiles.birth_date, '%M %e, %Y') as birth_date, families.caste, families.locality, families.house_type, families.family_type, families.family_income, families.occupation as foccupation from profiles
-         INNER JOIN families ON profiles.id = families.id
-         where profiles.id = 245 LIMIT 1`, function (error, results, fields) {
-           if (error) throw error;
-           profile = results[0];
-           // console.log(profile);
-           var msg = component.generateProfile(profile,0);
-           msg.replace("null"," ")
-           var whatsapp = '918092359314';
-           bot.sendTextMessage(socket,msg,whatsapp);
-           // bot.sendFileMessage(socket,profile.photo,whatsapp,msg);
+      conn.query(`SELECT * FROM compatibilities WHERE user_id = `+85805, function (error, results, fields) {
+        if (error) throw error;
+        user = results[0];
+        compatible_id = component.getCompatibleId(user);
+        var profile;
+        console.log('user_id = ' + user.user_id + "compatible_id" +compatible_id);
+        conn.query(`SELECT profiles.*, DATE_FORMAT(profiles.birth_date, '%M %e, %Y') as birth_date, families.caste, families.locality, families.house_type, families.family_type, families.family_income, families.occupation as foccupation from profiles
+        INNER JOIN families ON profiles.id = families.id
+        where profiles.id = `+ compatible_id +` LIMIT 1`, function (error, results, fields) {
+          if (error) throw error;
+          profile = results[0];
+          var msg = component.generateProfile(profile,0);
+          msg.replace("null"," ")
+          var whatsapp = '918092359314';
+          bot.sendTextMessage(socket,msg,whatsapp);
+        });
       });
       return 1;
     });
