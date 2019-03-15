@@ -289,7 +289,7 @@ function setChatData(chats){
   chats_data = chats;
 }
 setInterval(() => {
-//  getUserList();
+ getUserList();
 }, 10000);
 
 setInterval(() => {
