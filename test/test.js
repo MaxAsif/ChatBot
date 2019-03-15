@@ -46,7 +46,7 @@ describe('Test get Compatible Id', function() {
         FROM ((compatibilities
         INNER JOIN profiles ON compatibilities.user_id = profiles.id)
         INNER JOIN families ON compatibilities.user_id = families.id)
-        where daily_quota <=3 and LENGTH(compatibility) > 40 and compatibilities.user_id = 85810 LIMIT 1`, function (error, results, fields) {
+        where daily_quota <=3 and LENGTH(compatibility) > 40 LIMIT 1`, function (error, results, fields) {
         if (error) throw error;
         userList = results;
         userList.forEach(user => {
@@ -60,7 +60,7 @@ describe('Test get Compatible Id', function() {
 });
 describe('Test chats receiving or not', function() {
   describe('#getUnreadReplies()', function() {
-    it('should return `chats` when received', function() {
+    it('should return chats when received', function() {
       socket.emit("get_unread_replies", {
         sender_mobile: '919205125549'
       });
