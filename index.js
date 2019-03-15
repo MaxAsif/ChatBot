@@ -90,7 +90,7 @@ function sendFirstProfile(user) {
        {
          profile_status = (user.profile_status == null || user.profile_status == '')? [] : JSON.parse(user.profile_status);
          elem = {}
-         elem.user_id = compatible_id;
+         elem.user_id = profile.id;
          elem.status = 'R';
          profile_status.push(elem);
          profile_status = JSON.stringify(profile_status);
