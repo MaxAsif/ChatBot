@@ -89,7 +89,7 @@ function sendFirstProfile(user) {
        if(profile.temple_id == 'st3')
        {
          // user.current = 6;
-         conn.query(`UPDATE compatibilities SET current = 0, compatible_id = ` + profile.id+` WHERE user_id =`+user.user_id, function (error, results, fields) {
+         conn.query(`UPDATE compatibilities SET current = 0, active = ` + profile.id+` WHERE user_id =`+user.user_id, function (error, results, fields) {
            if (error) throw error;
          });
          logger.info('Updated table as compatible profile is non data account');
