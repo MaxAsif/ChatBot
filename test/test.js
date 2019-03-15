@@ -58,3 +58,17 @@ describe('Test get Compatible Id', function() {
     });
   });
 });
+describe('Test chats receiving or not', function() {
+  describe('#getUnreadReplies()', function() {
+    it('should return `chats` when received', function() {
+      socket.emit("get_unread_replies", {
+        sender_mobile: '919205125549'
+      });
+      logger.info('emit sent');
+      socket.on("get_unread_response", (chats) => {
+        console.log(chats);
+        setChatData(chats);
+      });
+    });
+  });
+});
