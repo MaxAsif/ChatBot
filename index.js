@@ -88,8 +88,14 @@ function sendFirstProfile(user) {
        profile = results[0];
        if(profile.temple_id == 'st3')
        {
+         profile_status = (user.profile_status == null || user.profile_status == '')? [] : JSON.parse(profile_status);
+         elem = {}
+         elem.user_id = compatible_id;
+         elem.status = 'R';
+         profile_status.push(elem);
+         profile_status = JSON.stringify(profile_status);
          // user.current = 6;
-         conn.query(`UPDATE compatibilities SET current = 0, active = ` + profile.id+` WHERE user_id =`+user.user_id, function (error, results, fields) {
+         conn.query(`UPDATE compatibilities SET current = 0, active = ` + profile.id+`, profile_status = `+ profile_status +` WHERE user_id =`+user.user_id, function (error, results, fields) {
            if (error) throw error;
          });
          logger.info('Updated table as compatible profile is non data account');
