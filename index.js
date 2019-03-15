@@ -93,8 +93,8 @@ function sendFirstProfile(user) {
          return;
        }
        var msg = component.generateProfile(profile,0);
-       // bot.sendTextMessage(socket,msg,user.whatsapp);
-       bot.sendFileMessage(socket,profile.photo,user.whatsapp,msg);
+       bot.sendTextMessage(socket,msg,user.whatsapp);
+       // bot.sendFileMessage(socket,profile.photo,user.whatsapp,msg);
        logger.info('Sent Profile id = '+ profile.id+' and profile name = '+profile.name+' to user = '+user.whatsapp);
        user.current = 1;
        connection.updateCompatibleTable(conn,user.user_id,user.current,user.profile_status,component.getCompatibleId(user),user.daily_quota+1);
