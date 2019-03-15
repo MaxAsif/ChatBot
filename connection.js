@@ -29,7 +29,7 @@ module.exports = {
   sendSeenRep: function(socket,payload) {
     socket.emit('send_seen_reply', {
       msg_id: payload,
-      sender_mobile: '918447061463'
+      sender_mobile: '919205125549'
     });
   },
 }
