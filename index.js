@@ -88,7 +88,7 @@ function sendFirstProfile(user) {
        profile = results[0];
        if(profile.temple_id == 'st3')
        {
-         profile_status = (user.profile_status == null || user.profile_status == '')? [] : JSON.parse(profile_status);
+         profile_status = (user.profile_status == null || user.profile_status == '')? [] : JSON.parse(user.profile_status);
          elem = {}
          elem.user_id = compatible_id;
          elem.status = 'R';
