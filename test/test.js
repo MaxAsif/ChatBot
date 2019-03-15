@@ -64,7 +64,7 @@ describe('Test chats receiving or not', function() {
       socket.emit("get_unread_replies", {
         sender_mobile: '919205125549'
       });
-      logger.info('emit sent');
+      console.log('emit sent');
       socket.on("get_unread_response", (chats) => {
         console.log(chats);
         setChatData(chats);
