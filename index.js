@@ -88,11 +88,12 @@ function sendFirstProfile(user) {
        profile = results[0];
        if(profile.temple_id == 'st3')
        {
-         user.current = 6;
-	console.log('here');
-         connection.updateCompatibleTable(conn,user.user_id,6,user.profile_status,component.getCompatibleId(user),user.daily_quota);
-         logger.info('Updated table as profile is non data');
-	 return;
+         // user.current = 6;
+         conn.query(`UPDATE compatibilities SET current = 0, compatible_id = ` + profile.id+` WHERE user_id =`+user.user_id, function (error, results, fields) {
+           if (error) throw error;
+         });
+         logger.info('Updated table as compatible profile is non data account');
+         return;
        }
        var msg = component.generateProfile(profile,0);
        bot.sendTextMessage(socket,msg,user.whatsapp);
