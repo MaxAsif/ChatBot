@@ -86,7 +86,7 @@ function sendFirstProfile(user) {
      where profiles.id = `+component.getCompatibleId(user) +` and profiles.gender != '`+user.gender+`'LIMIT 1`, function (error, results, fields) {
        if (error) throw error;
        profile = results[0];
-       if(profile.temple_id == 'st1')
+       if(profile.temple_id == 'st3')
        {
          user.current = 6;
          connection.updateCompatibleTable(conn,user.user_id,user.current,user.profile_status,component.getCompatibleId(user),user.daily_quota);
