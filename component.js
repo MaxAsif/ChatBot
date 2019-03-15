@@ -40,8 +40,8 @@ module.exports = {
   formatNumber: function(number){
     formattedNumber = number.substr(number.length - 10);
     formattedNumber = "+91 " + formattedNumber.substr(0,5)+" "+formattedNumber.substr(5);
-    if(number == '8092359314')
-      formattedNumber = 'Asif Iqbal'
+    // if(number == '8092359314')
+    //   formattedNumber = 'Asif Iqbal'
     return formattedNumber;
   },
   getWhatsappPoint: function(user) {
