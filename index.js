@@ -278,7 +278,7 @@ function getUserList(){
     INNER JOIN profiles ON compatibilities.user_id = profiles.id
     INNER JOIN preferences ON compatibilities.user_id = preferences.id
     INNER JOIN families ON compatibilities.user_id = families.id))
-    where daily_quota <=3 and LENGTH(compatibility) > 40 and preferences.amount_collected >= 2100 LIMIT 300 OFFSET 100`, function (error, results, fields) {
+    where daily_quota <=3 and LENGTH(compatibility) > 40 and profiles.wantBot = 1`, function (error, results, fields) {
     if (error) throw error;
     userList = results;
     processList(userList);
