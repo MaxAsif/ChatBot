@@ -45,6 +45,7 @@ function processChats(chats_data){
         console.log(messages.message);
         if(messages.message.toUpperCase() == 'SHOW'){
           contact = messages.contact;
+          contact.substr(contact.length - 10);
           conn.query(`UPDATE profiles
             JOIN families ON profiles.id = families.id
             SET profiles.wantBot = 1
