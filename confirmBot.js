@@ -41,9 +41,9 @@ function processChats(chats_data){
   chats_data.forEach(function(chat){
     if(!chat.isGroup){
       chat.messages.forEach(function(messages){
-        console.log(messages.contact);
-        console.log(messages.message);
         if(messages.message.toUpperCase() == 'SHOW'){
+          console.log(messages.contact);
+          console.log(messages.message);
           contact = messages.contact;
           contact.substr(contact.length - 10);
           conn.query(`UPDATE profiles
@@ -59,6 +59,18 @@ function processChats(chats_data){
       }
     });
 }
+
+function test() {
+  conn.query(`UPDATE profiles
+    JOIN families ON profiles.id = families.id
+    SET profiles.wantBot = 14
+    WHERE families.mobile LIKE '%`+ 8092359314 +`'`, function (error, results, fields) {
+      if (error) throw error;
+      console.log(results.changedRows);
+    });
+
+}
+
 setInterval(() => {
    getUnreadReplies();
 }, 1000);
