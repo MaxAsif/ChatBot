@@ -1,7 +1,7 @@
 const pino = require('pino');
 const AWS = require('aws-sdk');
 var mysql = require('mysql');
-var socket = require('socket.io-client')('http://13.233.79.202');
+var socket = require('socket.io-client')('http://13.234.113.66');
 const connection = require('../connection');
 const bot = require('../bot');
 const cTable = require('console.table');
@@ -67,7 +67,7 @@ describe('Test chats receiving or not', function() {
       console.log('emit sent');
       socket.on("get_unread_response", (chats) => {
         console.log(chats);
-        setChatData(chats);
+        // setChatData(chats);
       });
     });
   });

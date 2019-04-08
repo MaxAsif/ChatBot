@@ -10,7 +10,7 @@ const logger = pino({
 });
 var dateFormat = require('dateformat');
 var mysql = require('mysql');
-var socket = require('socket.io-client')('http://13.233.79.202');
+var socket = require('socket.io-client')('http://13.234.113.66');
 const connection = require('./connection');
 const bot = require('./bot');
 const cTable = require('console.table');
